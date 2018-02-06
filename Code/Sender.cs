@@ -15,17 +15,19 @@ namespace FCM.Net
         private readonly string _endpoint = "https://fcm.googleapis.com/fcm/send";
         private readonly string _contentType = "application/json";
 
-        private HttpClient _client = new HttpClient();
+        private HttpClient _client;
 
         /// <summary>
         /// Initialize the Message Sender
         /// </summary>
         /// <param name="serverKey">Server Key. To access this information, go to https://console.firebase.google.com/project/<<MY_PROJECT>>/settings/cloudmessaging </param>
-        public Sender(string serverKey)
+        /// <param name="httpClient">Optionally provide a HttpClient. If not provided a new one will be constructed and have the same lifespan as Sender</param>
+        public Sender(string serverKey, HttpClient httpClient = null)
         {
             if (string.IsNullOrWhiteSpace(serverKey))
                 throw new ArgumentNullException(nameof(serverKey));
 
+            _client = httpClient ?? new HttpClient();
             _client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"key={serverKey}");
         }
 
