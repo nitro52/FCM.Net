@@ -15,20 +15,29 @@ namespace FCM.Net
         private readonly string _endpoint = "https://fcm.googleapis.com/fcm/send";
         private readonly string _contentType = "application/json";
 
-        private HttpClient _client;
+        private readonly HttpClient _client;
+        private readonly JsonSerializerSettings _serializerSettings;
 
         /// <summary>
         /// Initialize the Message Sender
         /// </summary>
         /// <param name="serverKey">Server Key. To access this information, go to https://console.firebase.google.com/project/<<MY_PROJECT>>/settings/cloudmessaging </param>
         /// <param name="httpClient">Optionally provide a HttpClient. If not provided a new one will be constructed and have the same lifespan as Sender</param>
-        public Sender(string serverKey, HttpClient httpClient = null)
+        /// <param name="serializerSettings">Optionally provide a Newtonsoft.Json.JsonSerializerSettings used when serializing the message</param>
+        public Sender(string serverKey, HttpClient httpClient = null, JsonSerializerSettings serializerSettings = null)
         {
             if (string.IsNullOrWhiteSpace(serverKey))
                 throw new ArgumentNullException(nameof(serverKey));
 
             _client = httpClient ?? new HttpClient();
             _client.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"key={serverKey}");
+            
+            _serializerSettings = serializerSettings ??
+            new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+            };
+
         }
 
 
@@ -96,11 +105,7 @@ namespace FCM.Net
 
         private HttpContent GetRequestContent(Message message)
         {
-            string json = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.None,
-                            new JsonSerializerSettings
-                            {
-                                NullValueHandling = NullValueHandling.Ignore,
-                            });
+            string json = JsonConvert.SerializeObject(message, Newtonsoft.Json.Formatting.None, _serializerSettings);
 
             return this.GetRequestContent(json);
         }
