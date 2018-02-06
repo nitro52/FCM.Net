@@ -11,11 +11,57 @@ namespace FCM.Net.Playground
             //var registrationId = "ID gerado quando o device é registrado no FCM";
             //var serverKey = "acesse https://console.firebase.google.com/project/MY_PROJECT/settings/cloudmessaging";
 
-            var registrationId = "dG4rFnirWOE:APA91bE3COnsY-flnulPse4b4uKZOUDRpdOAe6DGTU_jWGtJt0P_hBXoN1tOa9Je4ZyAfA11OS3US0fZm6M7EljYipCY1f4MqjDLLvEltfe8_3aDnzwTxRbuw23HQ2JIY2ihXQXUvDym";
-            var serverKey = "AIzaSyC8dhbIHM0BEDextBkH1YRGwq2zWSPW2kk";
+            var registrationId = "eY7er1US4Yw:APA91bGAQeTFre-A96dIzSG_1kORWWG7fBjh6sLXsuSIUvLxmQWTjK9IcgkfhqJhIkpUjLCglouVibOrpDNELIPfKLQPVMvey9ZFUTc8EbHQNiAERHUzeRQZgBWc_PcCh6pmGjjRh_N7";
+            var serverKey = "AAAAxAFSVp8:APA91bEygq1VB5ca_CVhuKAStKEtHRhsEsxQxi7UMXD74hvSnZWUlbFZXEZFOLAJ1N2eNqwj7Km2WnIWrAjJrScDWhEQm7_01OqQ2E46vDNDA8YlebzUg2K71-us0-i5o_AMLzyx0Nw5";
+            var projectId = "androidfcmsample-83288";
 
+            var useLegacyFormat = false;
 
-            string title = "Teste .Net Core";
+            if (useLegacyFormat)
+                TestLegacyApiFormat(serverKey, registrationId);
+            else
+                TestV1ApiFormat(serverKey, registrationId, projectId);
+
+            Console.Read();
+        }
+
+        //Test using V1 API format
+        private static void TestV1ApiFormat(string serverKey, string registrationId, string projectId)
+        {
+            string title = "Teste .Net Core - V1";
+
+            using (var sender = new V1.Sender(serverKey, projectId: projectId))
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    var message = new V1.Message
+                    {
+                        Token = registrationId ,
+                        Notification = new V1.Notification
+                        {
+                            Title = title,
+                            Body = $"Hello World@!{DateTime.Now.ToString()}"
+                        }
+                    };
+                    var result = sender.SendAsync(message).Result;
+                    WriteResult(result);
+                    Console.WriteLine($"Success: {result.MessageResponse.Success}");
+
+                    var json = "{\"notification\":{\"title\":\"mensagem em json\",\"body\":\"funciona!\"},\"token\":\"" +
+                               registrationId + "\"}";
+                    result = sender.SendAsync(json).Result;
+                    WriteResult(result);
+
+                    Thread.Sleep(1000);
+                }
+            }
+        }
+
+        //Test using Legacy API format
+        private static void TestLegacyApiFormat(string serverKey, string registrationId)
+        {
+            string title = "Teste .Net Core - Lagacy";
+
             using (var sender = new Sender(serverKey))
             {
                 for (int i = 0; i < 3; i++)
@@ -33,15 +79,14 @@ namespace FCM.Net.Playground
                     WriteResult(result);
                     Console.WriteLine($"Success: {result.MessageResponse.Success}");
 
-                    var json = "{\"notification\":{\"title\":\"mensagem em json\",\"body\":\"funciona!\"},\"to\":\"" + registrationId + "\"}";
+                    var json = "{\"notification\":{\"title\":\"mensagem em json\",\"body\":\"funciona!\"},\"to\":\"" +
+                               registrationId + "\"}";
                     result = sender.SendAsync(json).Result;
                     WriteResult(result);
 
                     Thread.Sleep(1000);
                 }
             }
-
-            Console.Read();
         }
 
         private static void WriteResult(ResponseContent result)

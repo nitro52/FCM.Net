@@ -23,10 +23,17 @@
     <Compile Include="..\Code\Priority.cs" Link="Priority.cs" />
     <Compile Include="..\Code\ResponseContent.cs" Link="ResponseContent.cs" />
     <Compile Include="..\Code\Sender.cs" Link="Sender.cs" />
+    <Compile Include="..\Code\V1\Message.cs" Link="V1\Message.cs" />
+    <Compile Include="..\Code\V1\Notification.cs" Link="V1\Notification.cs" />
+    <Compile Include="..\Code\V1\Sender.cs" Link="V1\Sender.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="V1\" />
   </ItemGroup>
 
 </Project>

@@ -55,6 +55,15 @@
     <Compile Include="..\Code\Sender.cs">
       <Link>Sender.cs</Link>
     </Compile>
+    <Compile Include="..\code\v1\Message.cs">
+      <Link>V1\Message.cs</Link>
+    </Compile>
+    <Compile Include="..\code\v1\Notification.cs">
+      <Link>V1\Notification.cs</Link>
+    </Compile>
+    <Compile Include="..\code\v1\Sender.cs">
+      <Link>V1\Sender.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
